@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Erhan Web Page</title>
+<script>
+var led1, x1, led2, x2;
+
+function GetSwitchState()
+{
+	nocache = led1 + led2 + "&nocache="+ Math.random() * 1000000;
+	var request = new XMLHttpRequest();
+	request.onreadystatechange = function()
+	{
+		if (this.readyState == 4) 
+		{
+			if (this.status == 200)
+			{
+				if (this.responseText != null)
+				{
+					if (this.responseText.indexOf("LED1ON") > -1)
+					{
+						document.getElementById("LED1").style.fill = "yellow";
+					}
+					else
+					{
+						document.getElementById("LED1").style.fill = "black";
+					}
+					
+					if (this.responseText.indexOf("LED2ON") > -1)
+					{
+						document.getElementById("LED2").style.fill = "yellow";
+					}
+					else
+					{
+						document.getElementById("LED2").style.fill = "black";
+					}
+				
+					if (this.responseText.indexOf("S1:ON") > -1)
+					{
+						document.getElementById("SW1").style.fill = "red";document.getElementById("text1").innerHTML ="SW1:ON";
+					}
+					else
+					{
+						document.getElementById("SW1").style.fill = "white"; document.getElementById("text1").innerHTML ="SW1:OFF";
+					}
+				}
+			}
+		}
+	}
+	
+	request.open("GET", "ajax_switch" + nocache, true);
+	request.send(null);
+	setTimeout('GetSwitchState()', 1000);
+}
+
+function SetLEDStates(num)
+{
+	switch(num)
+	{
+		case 1: if(x1==1){led1="&LED1ON";x1=0;}else{led1="&LED1OFF";x1=1;}break;
+		case 2: if(x2==1){led2="&LED2ON";x2=0;}else{led2="&LED2OFF";x2=1;}break;
+		case 0: led1="&LED1OFF";x1=1; led2="&LED2OFF";x2=1; break;
+	}
+}
+</script>
+</head>
+
+<body onload="GetSwitchState();SetLEDStates(0);">
+	<center>
+		<h1>Erhan YILMAZ ESP8266 Web Server Application!</h1>
+		<div id="text1"></div>
+		<svg width="40" height="40"><circle id="SW1" cx="20" cy="20" r="10"stroke="black" stroke-width="4" fill="white"/></svg>
+		<div id="text2"></div>
+		<p><button type="L1" onclick="SetLEDStates(1);">LED1</button>&nbsp;
+		<button type="L2" onclick="SetLEDStates(2);">LED2</button>&nbsp;</p>
+		<p><center>
+			<svg width="50" height="50"><circle id="LED1" cx="20" cy="20" r="10"stroke="green" stroke-width="4" fill="black"/></svg>
+			<svg width="50" height="50"><circle id="LED2" cx="20" cy="20" r="10"stroke="green" stroke-width="4" fill="black"/></svg>
+		</center></p>
+	</center></body>
+</html>
+
