@@ -13,8 +13,8 @@
 
 #include <ESP8266WiFi.h>
 
-const char* ssid = "LeniWLAN";
-const char* password = "detfra%1";
+const char* ssid = "SSID Name";
+const char* password = "SSID Password";
 
 void GetSwitchState(WiFiClient);
 void SetLEDStates(WiFiClient, String);
