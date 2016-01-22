@@ -13,8 +13,8 @@
 
 #include <ESP8266WiFi.h>
 
-const char* ssid = "Erhandroid";
-const char* password = "12345678";
+const char* ssid = "LeniWLAN";
+const char* password = "detfra%1";
 
 void GetSwitchState(WiFiClient);
 void SetLEDStates(WiFiClient, String);
@@ -113,14 +113,14 @@ void loop()
             client.println("<head>");
             client.println("<title>Erhan Web Page</title>");
             client.println("<script>");
-            client.println("var led1, x1, led2, x2;");
+            client.println("var led1,led2;");
             client.println("function GetSwitchState() {");
             client.println("nocache = led1 + led2 + \"&nocache=\"\+ Math.random() * 1000000;");
             client.println("var request = new XMLHttpRequest();");
             client.println("request.onreadystatechange = function() {");
             client.println("if (this.readyState == 4) {");
             client.println("if (this.status == 200) {");
-            client.println("if (this.responseText != null) {");            
+            client.println("if (this.responseText != null) {");    		
             client.println("if (this.responseText.indexOf(\"LED1ON\") > -1){document.getElementById(\"LED1\").style.fill = \"yellow\";}");
             client.println("else {document.getElementById(\"LED1\").style.fill = \"black\";}");
             client.println("if (this.responseText.indexOf(\"LED2ON\") > -1){document.getElementById(\"LED2\").style.fill = \"yellow\";}");
@@ -130,13 +130,14 @@ void loop()
             client.println("}}}}");
             client.println("request.open(\"GET\", \"ajax_switch\" + nocache, true);");
             client.println("request.send(null);");
+			      client.println("led1=\"\";led2=\"\";");
             client.println("setTimeout('GetSwitchState()', 1000);");
             client.println("}");
             client.println("function SetLEDStates(num){");
             client.println("switch(num){");
-            client.println("case 1: if(x1==1){led1=\"&LED1ON\";x1=0;}else{led1=\"&LED1OFF\";x1=1;}break;");
-            client.println("case 2: if(x2==1){led2=\"&LED2ON\";x2=0;}else{led2=\"&LED2OFF\";x2=1;}break;");
-            client.println("case 0: led1=\"&LED1OFF\";x1=1; led2=\"&LED2OFF\";x2=1; break;");
+            client.println("case 1: led1=\"&LED1Change\";break;");
+            client.println("case 2: led2=\"&LED2Change\";break;");
+            client.println("case 0:  break;");
             client.println("}}");
             client.println("</script>");
             client.println("</head>");
@@ -182,7 +183,6 @@ void loop()
 // send the state of the switch to the web browser
 void GetSwitchState(WiFiClient cl)
 { 
-  char x=0;
 
   if (digitalRead(PUSH1))
     cl.println("S1:OFF");
@@ -193,28 +193,73 @@ void GetSwitchState(WiFiClient cl)
 
 void SetLEDStates(WiFiClient cl, String HTTP_req)
 {
+bool x1,x2;
+    if (HTTP_req.indexOf("LED1Change") > -1)
+      x1=true;
+    else
+      x1=false;
 
-  if (HTTP_req.indexOf("LED1ON") > -1)
-  {
-    digitalWrite(LED1, HIGH); 
-    cl.println("LED1ON");
-  }
-  else
-  {
-    digitalWrite(LED1, LOW); 
-    cl.println("LED1OFF");
-  }
+    if (HTTP_req.indexOf("LED2Change") > -1)
+      x2=true;
+    else
+      x2=false;
 
-  if (HTTP_req.indexOf("LED2ON") > -1)
-  {
-    digitalWrite(LED2, HIGH); 
-    cl.println("LED2ON");
-  }
-  else
-  {
-    digitalWrite(LED2, LOW); 
-    cl.println("LED2OFF");
-  }
+    
+    if (digitalRead(LED1))
+    {
+      if (x1)
+      {
+		    digitalWrite(LED1, LOW); 
+		    cl.println("LED1OFF");
+      }
+      else
+      {
+        digitalWrite(LED1, HIGH); 
+        cl.println("LED1ON");
+      }
+    }
+    else
+    {
+ 
+      if (x1)
+      {
+        digitalWrite(LED1, HIGH); 
+        cl.println("LED1ON");
+      }
+      else
+      {
+        digitalWrite(LED1, LOW); 
+        cl.println("LED1OFF");
+      }
+    }  
+    
+    
+   if (digitalRead(LED2))
+   {
+      if (x2)
+      {
+        digitalWrite(LED2, LOW); 
+        cl.println("LED2OFF");
+      }
+      else
+      {
+        digitalWrite(LED2, HIGH); 
+        cl.println("LED2ON");
+      }
+   }
+   else
+   {
+      if (x2)
+      {
+        digitalWrite(LED2, HIGH); 
+        cl.println("LED2ON");
+      }
+      else
+      {
+        digitalWrite(LED2, LOW); 
+        cl.println("LED2OFF");
+      }
+   }
 
 }
 

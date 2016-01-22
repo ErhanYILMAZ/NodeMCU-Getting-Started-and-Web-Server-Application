@@ -3,7 +3,7 @@
 <head>
 <title>Erhan Web Page</title>
 <script>
-var led1, x1, led2, x2;
+var led1,led2;
 
 function GetSwitchState()
 {
@@ -17,6 +17,7 @@ function GetSwitchState()
 			{
 				if (this.responseText != null)
 				{
+					
 					if (this.responseText.indexOf("LED1ON") > -1)
 					{
 						document.getElementById("LED1").style.fill = "yellow";
@@ -24,7 +25,7 @@ function GetSwitchState()
 					else
 					{
 						document.getElementById("LED1").style.fill = "black";
-					}
+					}				
 					
 					if (this.responseText.indexOf("LED2ON") > -1)
 					{
@@ -33,8 +34,8 @@ function GetSwitchState()
 					else
 					{
 						document.getElementById("LED2").style.fill = "black";
-					}
-				
+					}			
+					
 					if (this.responseText.indexOf("S1:ON") > -1)
 					{
 						document.getElementById("SW1").style.fill = "red";document.getElementById("text1").innerHTML ="SW1:ON";
@@ -50,16 +51,17 @@ function GetSwitchState()
 	
 	request.open("GET", "ajax_switch" + nocache, true);
 	request.send(null);
+	led1="";led2="";
 	setTimeout('GetSwitchState()', 1000);
 }
 
 function SetLEDStates(num)
-{
+{	
 	switch(num)
 	{
-		case 1: if(x1==1){led1="&LED1ON";x1=0;}else{led1="&LED1OFF";x1=1;}break;
-		case 2: if(x2==1){led2="&LED2ON";x2=0;}else{led2="&LED2OFF";x2=1;}break;
-		case 0: led1="&LED1OFF";x1=1; led2="&LED2OFF";x2=1; break;
+		case 1: led1="&LED1Change";break;
+		case 2: led2="&LED2Change";break;
+		case 0: break;
 	}
 }
 </script>
